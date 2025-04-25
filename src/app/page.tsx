@@ -2,6 +2,8 @@
 import { Button } from "@/components/ui/button";
 import FeatureCard from "@/components/FeatureCard";
 import { useRouter } from "next/navigation";
+import useAuth from "@/hooks/useAuth";
+import { useEffect } from "react";
 
 const features = [
   {
@@ -37,7 +39,13 @@ const features = [
 ];
 
 export default function Home() {
+  const { user } = useAuth();
   const router = useRouter();
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <h1 className="text-4xl font-bold text-center mb-8">
@@ -54,7 +62,7 @@ export default function Home() {
       <Button
         className="mt-8"
         onClick={() => {
-          router.push("/auth/login");
+          router.push("/login");
         }}
       >
         Get Started

@@ -2,17 +2,17 @@ import { User } from '@supabase/supabase-js';
 import { create } from 'zustand';
 
 type UserState = {
-    isAuthenticated: boolean;
+    authData: unknown;
     user: User | null,
     setUser: (user: User | null) => void;
-    setAuthenticated: (isAuthenticated: boolean) => void;
+    setAuthData: (authData: unknown) => void;
     logout: () => void;
 };
 
 export const useUserStore = create<UserState>((set) => ({
-    isAuthenticated: false,
+    authData: false,
     user: null,
     setUser: (user: User | null) => set({ user }),
-    setAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
-    logout: () => set({ isAuthenticated: false, user: null }),
+    setAuthData: (authData) => set({ authData }),
+    logout: () => set({ authData: null, user: null }),
 }));

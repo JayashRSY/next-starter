@@ -3,10 +3,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useUserStore } from "@/store/userStore";
 import { User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 
 export const useUser = () => {
-  const setUser = useUserStore((s) => s.setUser);
+  const { setUser } = useUserStore();
 
   return useQuery<User | null, Error>({
     queryKey: ["user"],
