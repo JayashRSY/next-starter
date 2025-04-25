@@ -89,22 +89,28 @@ const userCards = [
   "Other Card",
 ];
 
-export default function CreditCardRecommender() {
-  const [amount, setAmount] = useState("");
-  const [platform, setPlatform] = useState("");
-  const [category, setCategory] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [selectedCards, setSelectedCards] = useState<any>([]);
-  const [compareAll, setCompareAll] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [recommendation, setRecommendation] = useState<any>(null);
+interface Card {
+  name: string;
+  rewards: string;
+}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleCardToggle = (card: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setSelectedCards((prev: any) =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      prev.includes(card) ? prev.filter((c:any) => c !== card) : [...prev, card]
+interface Recommendation {
+  card: string;
+  savings: string;
+  reason: string;
+}
+
+export default function CreditCardRecommender() {
+  const [amount, setAmount] = useState<string>("");
+  const [platform, setPlatform] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [selectedCards, setSelectedCards] = useState<string[]>([]);
+  const [compareAll, setCompareAll] = useState<boolean>(false);
+  const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
+
+  const handleCardToggle = (card: string) => {
+    setSelectedCards((prev) =>
+      prev.includes(card) ? prev.filter((c) => c !== card) : [...prev, card]
     );
   };
 

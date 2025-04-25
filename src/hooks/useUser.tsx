@@ -12,7 +12,7 @@ export const useUser = () => {
     queryKey: ["user"],
     queryFn: async () => {
       const { data, error } = await supabase.auth.getUser();
-      if (error) throw error;
+      if (error) throw new Error(error.message);
       return data.user;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes

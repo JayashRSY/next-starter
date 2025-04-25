@@ -4,16 +4,34 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
     try {
-        const prompt = createCCPrompt(await req.json());
+        const body = await req.json();
+        
+        // Validate input
+        if (!body.amount || !body.platform || !body.category || !body.selectedCards) {
+            return NextResponse.json(
+                { error: 'Missing required fields' },
+                { status: 400 }
+            );
+        }
+
+        const prompt = createCCPrompt(body);
         const response = await ai(prompt);
-        const parsed = JSON.parse(response);
-        return NextResponse.json(parsed);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
+        
+        try {
+            const parsed = JSON.parse(response);
+            return NextResponse.json(parsed);
+        } catch (parseError) {
+            return NextResponse.json(
+                { error: 'Invalid response format from AI' },
+                { status: 500 }
+            );
+        }
+    } catch (err) {
+        const error = err as Error;
         return NextResponse.json(
             {
-                error: 'Gemini response failed',
-                details: err.message,
+                error: 'Request failed',
+                details: error.message,
             },
             { status: 500 }
         );

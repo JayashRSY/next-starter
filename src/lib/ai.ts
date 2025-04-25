@@ -10,6 +10,10 @@ export const ai = async (prompt: string): Promise<string> => {
         model: openai('gpt-4'),
         prompt,
     });
-    console.log("🚀 ~ text:", text);
+    
+    if (process.env.NODE_ENV === 'development') {
+        console.log("AI Response:", text);
+    }
+    
     return text;
 }
