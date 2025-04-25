@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   LineChart,
@@ -13,6 +14,7 @@ import {
   ChevronRight,
   Settings,
   Bell,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
@@ -21,6 +23,7 @@ import { cn } from "@/lib/utils";
 const LeftSideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { user } = useAuth();
+  const pathname = usePathname();
 
   const navItems = [
     {
@@ -58,6 +61,12 @@ const LeftSideBar = () => {
       href: "/services",
       icon: <Briefcase className="w-5 h-5" />,
       color: "text-indigo-500",
+    },
+    {
+      label: "Blogs",
+      href: "/blogs",
+      icon: <BookOpen className="w-5 h-5" />,
+      color: "text-pink-500",
     },
   ];
 
@@ -118,64 +127,89 @@ const LeftSideBar = () => {
         {/* Main Navigation */}
         <div className="flex-1 py-4 overflow-y-auto">
           <ul className="space-y-1 px-3">
-            {navItems.map((item, index) => (
-              <li key={index}>
-                <Link
-                  href={`/dashboard${item.href}`}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-lg transition-all",
-                    "hover:bg-gray-50 group relative",
-                    isCollapsed ? "justify-center" : ""
-                  )}
-                >
-                  <span className={cn("transition-colors", item.color)}>
-                    {item.icon}
-                  </span>
-                  {!isCollapsed && (
-                    <span className="font-medium text-gray-700 group-hover:text-gray-900">
-                      {item.label}
+            {navItems.map((item, index) => {
+              const isActive = pathname === `/dashboard${item.href}` || 
+                             (item.href === '/' && pathname === '/dashboard');
+              return (
+                <li key={index}>
+                  <Link
+                    href={`/dashboard${item.href}`}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-lg transition-all",
+                      "group relative",
+                      isCollapsed ? "justify-center" : "",
+                      isActive 
+                        ? "bg-gray-100 text-gray-900" 
+                        : "hover:bg-gray-50 text-gray-700"
+                    )}
+                  >
+                    <span className={cn(
+                      "transition-colors",
+                      isActive ? item.color : "text-gray-500",
+                    )}>
+                      {item.icon}
                     </span>
-                  )}
-                  {isCollapsed && (
-                    <div className="absolute left-full ml-6 px-2 py-1 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
-                      {item.label}
-                    </div>
-                  )}
-                </Link>
-              </li>
-            ))}
+                    {!isCollapsed && (
+                      <span className={cn(
+                        "font-medium",
+                        isActive ? "text-gray-900" : "text-gray-700 group-hover:text-gray-900"
+                      )}>
+                        {item.label}
+                      </span>
+                    )}
+                    {isCollapsed && (
+                      <div className="absolute left-full ml-6 px-2 py-1 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
+                        {item.label}
+                      </div>
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
         {/* Bottom Navigation */}
         <div className="border-t border-gray-100 py-4 px-3">
           <ul className="space-y-1">
-            {bottomNavItems.map((item, index) => (
-              <li key={index}>
-                <Link
-                  href={`/dashboard${item.href}`}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-lg transition-all",
-                    "hover:bg-gray-50 group relative",
-                    isCollapsed ? "justify-center" : ""
-                  )}
-                >
-                  <span className={cn("transition-colors", item.color)}>
-                    {item.icon}
-                  </span>
-                  {!isCollapsed && (
-                    <span className="font-medium text-gray-700 group-hover:text-gray-900">
-                      {item.label}
+            {bottomNavItems.map((item, index) => {
+              const isActive = pathname === `/dashboard${item.href}`;
+              return (
+                <li key={index}>
+                  <Link
+                    href={`/dashboard${item.href}`}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-lg transition-all",
+                      "group relative",
+                      isCollapsed ? "justify-center" : "",
+                      isActive 
+                        ? "bg-gray-100 text-gray-900" 
+                        : "hover:bg-gray-50 text-gray-700"
+                    )}
+                  >
+                    <span className={cn(
+                      "transition-colors",
+                      isActive ? item.color : "text-gray-500"
+                    )}>
+                      {item.icon}
                     </span>
-                  )}
-                  {isCollapsed && (
-                    <div className="absolute left-full ml-6 px-2 py-1 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
-                      {item.label}
-                    </div>
-                  )}
-                </Link>
-              </li>
-            ))}
+                    {!isCollapsed && (
+                      <span className={cn(
+                        "font-medium",
+                        isActive ? "text-gray-900" : "text-gray-700 group-hover:text-gray-900"
+                      )}>
+                        {item.label}
+                      </span>
+                    )}
+                    {isCollapsed && (
+                      <div className="absolute left-full ml-6 px-2 py-1 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
+                        {item.label}
+                      </div>
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </nav>
