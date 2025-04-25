@@ -89,7 +89,7 @@ const calculators = [
     title: "Increasing SIP Calculator",
     description: "Calculate returns with step-up SIP investments",
     icon: ArrowUpRight,
-    href: "/dashboard/calculators/step-up-sip",
+    href: "/dashboard/calculators/increasing-sip",
     color: "text-emerald-600",
     bgColor: "bg-emerald-100"
   },
@@ -105,7 +105,7 @@ const calculators = [
     title: "NPS Calculator",
     description: "Calculate returns on NPS investments",
     icon: Building,
-    href: "/dashboard/calculators/nps",
+    href: "/dashboard/calculators/nps-calculator",
     color: "text-sky-600",
     bgColor: "bg-sky-100"
   }
