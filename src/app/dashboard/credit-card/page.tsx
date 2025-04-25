@@ -1,8 +1,26 @@
-"use client";
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+'use client';
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { CATEGORIES, CREDIT_CARDS, PLATFORMS } from '@/utils/constants';
+import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -10,237 +28,285 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Switch } from "@/components/ui/switch";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { CreditCard, ArrowRight } from "lucide-react";
 
-const platforms = [
-  "Amazon",
-  "Flipkart",
-  "Myntra",
-  "Ajio",
-  "Tata Cliq",
-  "Nykaa",
-  "Meesho",
-  "Zomato",
-  "Swiggy",
-  "Dineout",
-  "EazyDiner",
-  "Offline Restaurant",
-  "Offline Merchant (POS)",
-  "Grocery Store",
-  "Kirana Store",
-  "Petrol Pump",
-  "Utility Bill Payment",
-  "UPI",
-  "Paytm",
-  "PhonePe",
-  "Google Pay",
-  "Amazon Pay",
-  "Credit Card Bill Payment",
-  "IRCTC",
-  "MakeMyTrip",
-  "Yatra",
-  "Goibibo",
-  "Uber",
-  "Ola",
-  "RedBus",
-  "Airlines (IndiGo, Air India, etc.)",
-  "Netflix",
-  "Prime Video",
-  "Hotstar",
-  "BookMyShow",
-  "Spotify",
-  "YouTube Premium",
-  "PharmEasy",
-  "1mg",
-  "Practo",
-  "Apollo",
-  "Offline Pharmacy",
-  "Gym Membership",
-  "Other",
-];
-
-const categories = [
-  "Groceries",
-  "Electronics",
-  "Food & Dining",
-  "Travel & Transport",
-  "Fashion & Apparel",
-  "Fuel",
-  "Utilities & Bills",
-  "Health & Wellness",
-  "Entertainment & Subscriptions",
-  "Education",
-  "Rent & Housing",
-  "EMI/Loan Payments",
-  "Miscellaneous / Others",
-];
-
-const userCards = [
-  "HDFC Millennia",
-  "Axis Magnus",
-  "ICICI Amazon Pay",
-  "SBI Cashback",
-  "Amex MRCC",
-  "Standard Chartered Ultimate",
-  "HSBC Cashback",
-  "IDFC First Wealth",
-  "Other Card",
-];
-
-interface Card {
-  name: string;
-  rewards: string;
-}
-
-interface Recommendation {
-  card: string;
-  savings: string;
-  reason: string;
-}
+// Form schema
+const formSchema = z.object({
+  amount: z.number().min(1, "Amount must be greater than 0"),
+  platform: z.string().min(1, "Please select a platform"),
+  category: z.string().min(1, "Please select a category"),
+  userCards: z.array(z.string()).default([]),
+});
 
 export default function CreditCardRecommender() {
-  const [amount, setAmount] = useState<string>("");
-  const [platform, setPlatform] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
-  const [selectedCards, setSelectedCards] = useState<string[]>([]);
-  const [compareAll, setCompareAll] = useState<boolean>(false);
-  const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
+  const [recommendationResult, setRecommendationResult] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleCardToggle = (card: string) => {
-    setSelectedCards((prev) =>
-      prev.includes(card) ? prev.filter((c) => c !== card) : [...prev, card]
-    );
-  };
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      amount: 0,
+      platform: "",
+      category: "",
+      userCards: [],
+    },
+  });
 
-  const validate = () => {
-    if (!amount || !platform || !category || selectedCards.length === 0) {
-      toast.error("Please fill all fields and select your cards.");
-      return false;
-    }
-    return true;
-  };
-
-  const handleSubmit = async () => {
-    if (!validate()) return;
-
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     try {
-      const res = await fetch("/api/recommend", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount,
-          platform,
-          category,
-          selectedCards,
-        }),
+      const res = await fetch('/api/credit-cards/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
       });
-
       const data = await res.json();
-      if (res.ok) {
-        setRecommendation(data);
-      } else {
-        toast.error(data.error || "Recommendation failed.");
-      }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      toast.error("Something went wrong while fetching recommendation.", err);
+      setRecommendationResult(data);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsLoading(false);
     }
-  };
-  
+  }
+
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Credit Card Recommender</h1>
+    <div className="container mx-auto py-8 max-w-6xl">
+      <div className="flex flex-col gap-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Credit Card Recommender
+          </h1>
+          <p className="text-muted-foreground mt-4 text-lg max-w-2xl mx-auto">
+            Find the perfect credit card for your purchase and maximize your rewards with our AI-powered recommendation system.
+          </p>
+        </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Enter Your Spend Details</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Input
-            type="number"
-            placeholder="Enter amount in ₹"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
+        <div className={`grid gap-8 ${recommendationResult ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 max-w-3xl mx-auto w-full'}`}>
+          <div className={recommendationResult ? 'md:col-span-2' : 'col-span-1'}>
+            <Card className="shadow-lg border-t-4 border-t-blue-500">
+              <CardHeader className="space-y-1">
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <CreditCard className="h-6 w-6 text-blue-500" />
+                  Transaction Details
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Enter your purchase details to get personalized card recommendations.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="amount"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-semibold">Amount (₹)</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="Enter amount"
+                                className="focus-visible:ring-blue-500"
+                                {...field}
+                                onChange={e => field.onChange(Number(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormDescription className="text-xs">
+                              How much are you planning to spend?
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-          <Select onValueChange={setPlatform}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Platform" />
-            </SelectTrigger>
-            <SelectContent>
-              {platforms.map((plat) => (
-                <SelectItem key={plat} value={plat}>
-                  {plat}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                      <FormField
+                        control={form.control}
+                        name="platform"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-semibold">Platform</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="focus-visible:ring-blue-500">
+                                  <SelectValue placeholder="Select platform" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent className="max-h-[300px]">
+                                {PLATFORMS.map((platform) => (
+                                  <SelectItem key={platform} value={platform}>
+                                    {platform}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormDescription className="text-xs">
+                              Where are you making this purchase?
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
-          <Select onValueChange={setCategory}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {cat}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                    <FormField
+                      control={form.control}
+                      name="category"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold">Category</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="focus-visible:ring-blue-500">
+                                <SelectValue placeholder="Select category" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {CATEGORIES.map((category) => (
+                                <SelectItem key={category} value={category}>
+                                  {category}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormDescription className="text-xs">
+                            What category does this purchase fall under?
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-          <div>
-            <p className="font-medium mb-2">Select Your Credit Cards</p>
-            <div className="grid grid-cols-2 gap-2">
-              {userCards.map((card) => (
-                <label key={card} className="flex items-center gap-2">
-                  <Checkbox
-                    checked={selectedCards.includes(card)}
-                    onCheckedChange={() => handleCardToggle(card)}
-                  />
-                  {card}
-                </label>
-              ))}
-            </div>
+                    <FormField
+                      control={form.control}
+                      name="userCards"
+                      render={() => (
+                        <FormItem>
+                          <div className="mb-4">
+                            <FormLabel className="text-sm font-semibold">Your Credit Cards</FormLabel>
+                            <FormDescription className="text-xs">
+                              Select the credit cards you currently have
+                            </FormDescription>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {CREDIT_CARDS.map((card) => (
+                              <FormField
+                                key={card.id}
+                                control={form.control}
+                                name="userCards"
+                                render={({ field }) => {
+                                  const isSelected = field.value?.includes(card.id);
+                                  return (
+                                    <FormItem
+                                      key={card.id}
+                                      className={`flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 hover:bg-muted/50 transition-all cursor-pointer ${
+                                        isSelected ? 'bg-blue-50 border-blue-200' : ''
+                                      }`}
+                                      onClick={() => {
+                                        const currentValue = field.value || [];
+                                        const newValue = isSelected
+                                          ? currentValue.filter((id) => id !== card.id)
+                                          : [...currentValue, card.id];
+                                        field.onChange(newValue);
+                                      }}
+                                    >
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={isSelected}
+                                          className={isSelected ? 'text-blue-500 border-blue-500' : ''}
+                                          onCheckedChange={(checked) => {
+                                            const currentValue = field.value || [];
+                                            const newValue = checked
+                                              ? [...currentValue, card.id]
+                                              : currentValue.filter((id) => id !== card.id);
+                                            field.onChange(newValue);
+                                          }}
+                                          onClick={(e) => e.stopPropagation()}
+                                        />
+                                      </FormControl>
+                                      <div className="space-y-1 leading-none flex-1">
+                                        <FormLabel className="text-sm font-medium leading-none">
+                                          {card.name}
+                                        </FormLabel>
+                                        <FormDescription className="text-xs text-muted-foreground">
+                                          {card.bank}
+                                        </FormDescription>
+                                      </div>
+                                    </FormItem>
+                                  );
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        "Analyzing..."
+                      ) : (
+                        <>
+                          Get Recommendation
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Switch checked={compareAll} onCheckedChange={setCompareAll} />
-            <span>Compare All Cards</span>
+          <div className="md:col-span-1 sticky top-8">
+            {recommendationResult && (
+              <Card className="shadow-lg border-t-4 border-t-green-500">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <CreditCard className="h-5 w-5 text-green-500" />
+                    Best Card for You
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-semibold text-lg text-green-700">{recommendationResult.bestCard.name}</h3>
+                      <p className="text-sm text-muted-foreground">{recommendationResult.bestCard.bank}</p>
+                    </div>
+                    <div className="space-y-2 bg-muted/50 p-4 rounded-lg">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">Potential Cashback</span>
+                        <span className="font-semibold text-green-600">₹{recommendationResult.savingsAmount.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">Card Type</span>
+                        <span className="font-medium">{recommendationResult.bestCard.type}</span>
+                      </div>
+                    </div>
+                    {recommendationResult.bestCard.benefits && (
+                      <div>
+                        <h4 className="font-medium mb-2 text-sm">Key Benefits</h4>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                          {recommendationResult.bestCard.benefits.map((benefit: string, index: number) => (
+                            <li key={index} className="text-sm">{benefit}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
-
-          <Button onClick={handleSubmit}>Get Recommendation</Button>
-        </CardContent>
-      </Card>
-
-      {recommendation && !compareAll && (
-        <Card className="bg-green-50">
-          <CardHeader>
-            <CardTitle>Recommended Card</CardTitle>
-          </CardHeader>
-          <CardContent>
-            Use <strong>{recommendation.card}</strong> to save{" "}
-            <strong>{recommendation.savings}</strong>
-          </CardContent>
-        </Card>
-      )}
-
-      {compareAll && (
-        <Card className="bg-blue-50">
-          <CardHeader>
-            <CardTitle>Compare All Cards</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm">
-              (Coming soon... will show projected savings for each card.)
-            </p>
-          </CardContent>
-        </Card>
-      )}
+        </div>
+      </div>
     </div>
   );
 }

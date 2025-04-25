@@ -1,47 +1,53 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { User } from '@supabase/supabase-js';
-import { useRouter } from 'next/navigation';
+"use client"
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
+import { User } from '@supabase/supabase-js'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
-const useAuth = () => {
-  
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+export const useAuth = () => {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     const fetchUser = async () => {
-      setLoading(true);
-      const { data: { user }, error } = await supabase.auth.getUser();
+      try {
+        setLoading(true)
+        const { data: { user }, error } = await supabase.auth.getUser()
 
-      if (error) {
-        console.error('Error fetching user:', error.message);
-        setUser(null);
-      } else {
-        setUser(user);
+        if (error) throw error
+        setUser(user)
+      } catch (error) {
+        console.error('Error fetching user:', error)
+        toast.error('Failed to fetch user data')
+        setUser(null)
+      } finally {
+        setLoading(false)
       }
+    }
 
-      setLoading(false);
-    };
+    fetchUser()
 
-    fetchUser();
-
-    // Listen for auth state changes
-    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') {
-        setUser(null);
-        router.push('/login'); // Redirect to login page on sign out
-      } else if (session?.user) {
-        setUser(session?.user);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_OUT') {
+          setUser(null)
+          router.push('/login')
+          toast.success('Logged out successfully')
+        } else if (event === 'SIGNED_IN' && session?.user) {
+          setUser(session.user)
+          toast.success('Logged in successfully')
+        } else if (event === 'USER_UPDATED' && session?.user) {
+          setUser(session.user)
+        }
       }
-    });
+    )
 
     return () => {
-      subscription?.subscription.unsubscribe();
-    };
-  }, [router]);
+      subscription.unsubscribe()
+    }
+  }, [router])
 
-  return { user, loading };
-};
-
-export default useAuth;
+  return { user, loading }
+}
