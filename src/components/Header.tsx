@@ -2,7 +2,6 @@
 import React from "react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
@@ -18,16 +17,7 @@ import ThemeButton from "./ThemeButton";
 
 const Header = () => {
   const router = useRouter();
-  const { user } = useAuth();
-
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error(error);
-    } else {
-      router.push("/login");
-    }
-  };
+  const { user, logout } = useAuth();
 
   return (
     <header className="flex items-center justify-between px-6 py-4 shadow-md bg-background border-b border-border">
@@ -74,7 +64,7 @@ const Header = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
-                  onClick={handleLogout}
+                  onClick={logout}
                 >
                   Log out
                 </DropdownMenuItem>

@@ -33,7 +33,7 @@ export const useAuth = () => {
       async (event, session) => {
         if (event === 'SIGNED_OUT') {
           setUser(null)
-          router.push('/login')
+          // Don't redirect here, let the component handle it
           toast.success('Logged out successfully')
         } else if (event === 'SIGNED_IN' && session?.user) {
           setUser(session.user)
@@ -47,7 +47,26 @@ export const useAuth = () => {
     return () => {
       subscription.unsubscribe()
     }
-  }, [router])
+  }, [])
 
-  return { user, loading }
+  const logout = async () => {
+    try {
+      setLoading(true)
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+      
+      // Clear user state first
+      setUser(null)
+      
+      // Then redirect
+      router.push('/login')
+    } catch (error) {
+      console.error('Error logging out:', error)
+      toast.error('Failed to log out')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return { user, loading, logout }
 }
