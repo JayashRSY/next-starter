@@ -41,7 +41,7 @@ const OneTapComponent = () => {
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         /* global google */
-        google.accounts.id.initialize({
+        google?.accounts?.id.initialize({
           client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
           callback: async (response: CredentialResponse) => {
             try {
@@ -66,7 +66,7 @@ const OneTapComponent = () => {
           // with chrome's removal of third-party cookies, we need to use FedCM instead (https://developers.google.com/identity/gsi/web/guides/fedcm-migration)
           use_fedcm_for_prompt: true,
         })
-        google.accounts.id.prompt() // Display the One Tap UI
+        google?.accounts?.id.prompt() // Display the One Tap UI
       })
     }
     initializeGoogleOneTap()

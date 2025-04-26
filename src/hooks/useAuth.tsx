@@ -14,13 +14,32 @@ export const useAuth = () => {
     const fetchUser = async () => {
       try {
         setLoading(true)
-        const { data: { user }, error } = await supabase.auth.getUser()
-
-        if (error) throw error
-        setUser(user)
+        // Check for session first to avoid the AuthSessionMissingError
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+        
+        if (sessionError) {
+          console.error('Error fetching session:', sessionError)
+          setUser(null)
+          setLoading(false)
+          return
+        }
+        
+        // Only try to get user if we have a session
+        if (sessionData?.session) {
+          const { data: { user }, error } = await supabase.auth.getUser()
+          
+          if (error) throw error
+          setUser(user)
+        } else {
+          // No session found, clear user state
+          setUser(null)
+        }
       } catch (error) {
         console.error('Error fetching user:', error)
-        toast.error('Failed to fetch user data')
+        // Don't show toast for auth session missing errors as they're expected when not logged in
+        if (!(error instanceof Error && error.message.includes('AuthSessionMissingError'))) {
+          toast.error('Failed to fetch user data')
+        }
         setUser(null)
       } finally {
         setLoading(false)
