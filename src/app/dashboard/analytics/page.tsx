@@ -5,21 +5,30 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { ArrowUpRight, ArrowDownRight, DollarSign, Calendar, ShoppingBag, Gift } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
+// Format number to Indian currency format
+const formatIndianCurrency = (value: number) => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0
+  }).format(value);
+};
+
 const monthlyData = [
-  { name: 'Jan', value: 4000 },
-  { name: 'Feb', value: 3000 },
-  { name: 'Mar', value: 2000 },
-  { name: 'Apr', value: 2780 },
-  { name: 'May', value: 1890 },
-  { name: 'Jun', value: 2390 },
-  { name: 'Jul', value: 3490 },
+  { name: 'Jan', value: 400000 },
+  { name: 'Feb', value: 300000 },
+  { name: 'Mar', value: 200000 },
+  { name: 'Apr', value: 278000 },
+  { name: 'May', value: 189000 },
+  { name: 'Jun', value: 239000 },
+  { name: 'Jul', value: 349000 },
 ];
 
 const categoryData = [
-  { name: 'Food', value: 400 },
-  { name: 'Shopping', value: 300 },
-  { name: 'Travel', value: 300 },
-  { name: 'Entertainment', value: 200 },
+  { name: 'Food', value: 40000 },
+  { name: 'Shopping', value: 30000 },
+  { name: 'Travel', value: 30000 },
+  { name: 'Entertainment', value: 20000 },
 ];
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -45,7 +54,7 @@ const AnalyticsPage = () => {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Total Spending</p>
-              <h3 className="text-2xl font-bold mb-2 text-foreground">$12,450</h3>
+              <h3 className="text-2xl font-bold mb-2 text-foreground">{formatIndianCurrency(1245000)}</h3>
               <div className="flex items-center text-green-500 dark:text-green-400">
                 <ArrowUpRight className="h-4 w-4 mr-1" />
                 <span className="text-sm">+12% from last month</span>
@@ -61,7 +70,7 @@ const AnalyticsPage = () => {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Average Per Day</p>
-              <h3 className="text-2xl font-bold mb-2 text-foreground">$142</h3>
+              <h3 className="text-2xl font-bold mb-2 text-foreground">{formatIndianCurrency(14200)}</h3>
               <div className="flex items-center text-red-500 dark:text-red-400">
                 <ArrowDownRight className="h-4 w-4 mr-1" />
                 <span className="text-sm">-3% from last month</span>
@@ -93,7 +102,7 @@ const AnalyticsPage = () => {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Rewards Earned</p>
-              <h3 className="text-2xl font-bold mb-2 text-foreground">$345</h3>
+              <h3 className="text-2xl font-bold mb-2 text-foreground">{formatIndianCurrency(34500)}</h3>
               <div className="flex items-center text-green-500 dark:text-green-400">
                 <ArrowUpRight className="h-4 w-4 mr-1" />
                 <span className="text-sm">+15% from last month</span>
@@ -115,8 +124,9 @@ const AnalyticsPage = () => {
               <LineChart data={monthlyData}>
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#333" : "#f0f0f0"} />
                 <XAxis dataKey="name" stroke={isDark ? "#aaa" : "#666"} />
-                <YAxis stroke={isDark ? "#aaa" : "#666"} />
+                <YAxis stroke={isDark ? "#aaa" : "#666"} tickFormatter={(value) => `₹${(value/1000)}K`} />
                 <Tooltip 
+                  formatter={(value) => [formatIndianCurrency(value as number), "Amount"]}
                   contentStyle={{ 
                     backgroundColor: isDark ? '#222' : 'white',
                     border: 'none',
@@ -133,6 +143,7 @@ const AnalyticsPage = () => {
                   strokeWidth={2}
                   dot={{ fill: isDark ? "#a78bfa" : "#8884d8" }}
                   activeDot={{ r: 6 }}
+                  name="Amount"
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -152,10 +163,11 @@ const AnalyticsPage = () => {
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
-                  label
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                   paddingAngle={2}
+                  nameKey="name"
                 >
-                  {categoryData.map((_entry, index) => (
+                  {categoryData.map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
                       fill={COLORS[index % COLORS.length]}
@@ -165,6 +177,7 @@ const AnalyticsPage = () => {
                   ))}
                 </Pie>
                 <Tooltip 
+                  formatter={(value) => [formatIndianCurrency(value as number), "Amount"]}
                   contentStyle={{ 
                     backgroundColor: isDark ? '#222' : 'white',
                     border: 'none',
@@ -173,7 +186,7 @@ const AnalyticsPage = () => {
                     color: isDark ? '#eee' : '#333'
                   }}
                 />
-                <Legend verticalAlign="bottom" height={36} />
+                <Legend verticalAlign="bottom" height={36} formatter={(value) => value} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -186,8 +199,12 @@ const AnalyticsPage = () => {
               <BarChart data={categoryData}>
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#333" : "#f0f0f0"} />
                 <XAxis dataKey="name" stroke={isDark ? "#aaa" : "#666"} />
-                <YAxis stroke={isDark ? "#aaa" : "#666"} />
+                <YAxis 
+                  stroke={isDark ? "#aaa" : "#666"} 
+                  tickFormatter={(value) => `₹${(value/1000)}K`}
+                />
                 <Tooltip 
+                  formatter={(value) => [formatIndianCurrency(value as number), "Amount"]}
                   contentStyle={{ 
                     backgroundColor: isDark ? '#222' : 'white',
                     border: 'none',
@@ -201,6 +218,7 @@ const AnalyticsPage = () => {
                   dataKey="value" 
                   fill={isDark ? "#a78bfa" : "#8884d8"}
                   radius={[4, 4, 0, 0]}
+                  name="Amount"
                 />
               </BarChart>
             </ResponsiveContainer>
