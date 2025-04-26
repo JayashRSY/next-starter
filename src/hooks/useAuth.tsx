@@ -32,9 +32,9 @@ export const useAuth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_OUT') {
+          // Clear user state first
           setUser(null)
-          // Don't redirect here, let the component handle it
-          toast.success('Logged out successfully')
+          // Don't redirect here - let the logout function handle it
         } else if (event === 'SIGNED_IN' && session?.user) {
           setUser(session.user)
           toast.success('Logged in successfully')
@@ -52,14 +52,17 @@ export const useAuth = () => {
   const logout = async () => {
     try {
       setLoading(true)
+      // Clear user state first before signing out
+      setUser(null)
+      
       const { error } = await supabase.auth.signOut()
       if (error) throw error
       
-      // Clear user state first
-      setUser(null)
+      // Use a timeout to ensure state is cleared before navigation
+      setTimeout(() => {
+        router.push('/login')
+      }, 100)
       
-      // Then redirect
-      router.push('/login')
     } catch (error) {
       console.error('Error logging out:', error)
       toast.error('Failed to log out')

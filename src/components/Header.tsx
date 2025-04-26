@@ -13,7 +13,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "lucide-react";
 import ThemeButton from "./ThemeButton";
-import Image from "next/image";
 
 const Header = () => {
   const router = useRouter();
@@ -21,22 +20,13 @@ const Header = () => {
 
   return (
     <header className="flex items-center justify-between px-6 py-4 shadow-md bg-background border-b border-border">
-      <div className="flex gap-4 items-baseline">
-        <Image
-          src="/coin.png"
-          alt="Wealth Wings Logo"
-          className="w-8 h-8 object-contain"
-          width={40}
-          height={40}
-        />
-        <div className="text-xl font-bold text-foreground">Wealth Wings</div>
-      </div>
+      <div className="text-xl font-bold text-foreground">Wealth Wings</div>
 
       <nav>
         {user ? (
           <div className="flex items-center space-x-4">
             <ThemeButton />
-
+            
             <DropdownMenu>
               <DropdownMenuTrigger className="outline-none">
                 <Avatar className="h-8 w-8 cursor-pointer">
