@@ -113,12 +113,12 @@ const calculators = [
 
 export default function CalculatorsPage() {
   return (
-    <div className="p-8 space-y-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div className="p-8 space-y-8 bg-gradient-to-br from-background to-background/80 min-h-screen">
       <div className="flex flex-col gap-4">
         <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           Financial Calculators
         </h1>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Comprehensive suite of calculators to help you make informed financial decisions.
         </p>
       </div>
@@ -126,18 +126,18 @@ export default function CalculatorsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {calculators.map((calculator) => (
           <Link href={calculator.href} key={calculator.title}>
-            <Card className="hover:shadow-lg transition-all duration-300 border-none bg-white/80 backdrop-blur-sm h-full">
+            <Card className="hover:shadow-lg transition-all duration-300 border-border bg-card/80 dark:bg-card/60 backdrop-blur-sm h-full">
               <CardHeader className="flex flex-row items-start space-y-0 pb-2">
                 <div className="flex-1">
                   <CardTitle className="text-lg font-semibold flex items-center gap-2">
                     {calculator.title}
                     {calculator.isNew && (
-                      <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
+                      <span className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs px-2 py-0.5 rounded-full">
                         New
                       </span>
                     )}
                     {calculator.isUpdated && (
-                      <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full">
+                      <span className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 text-xs px-2 py-0.5 rounded-full">
                         Updated
                       </span>
                     )}
@@ -148,7 +148,7 @@ export default function CalculatorsPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-500">{calculator.description}</p>
+                <p className="text-sm text-muted-foreground">{calculator.description}</p>
                 <Button 
                   variant="ghost" 
                   className={`mt-4 w-full justify-between ${calculator.color} hover:${calculator.bgColor}`}

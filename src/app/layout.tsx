@@ -33,14 +33,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ClientProviders>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Header />
-          <Toaster />
-          <div className="flex">
-            <LeftSideBar />
-            <main className="flex-1 bg-gray-50">{children}</main>
-          </div>
-        </ThemeProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Header />
+            <Toaster />
+            <div className="flex">
+              <LeftSideBar />
+              <main className="flex-1 bg-background">{children}</main>
+            </div>
+          </ThemeProvider>
         </ClientProviders>
       </body>
     </html>

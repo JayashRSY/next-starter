@@ -64,8 +64,9 @@ export default function MutualFundCommissionCalculator() {
   });
 
   const [result, setResult] = useState<CalculationResult | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
+  
+  // Remove the isDarkMode state as we'll use the theme from next-themes
+  
   useEffect(() => {
     calculateResults();
   }, [formData]);
@@ -153,7 +154,7 @@ export default function MutualFundCommissionCalculator() {
   };
 
   return (
-    <div className={`container mx-auto py-8 max-w-6xl ${isDarkMode ? 'dark' : ''}`}>
+    <div className="container mx-auto py-8 max-w-6xl">
       <div className="flex flex-col gap-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -169,7 +170,7 @@ export default function MutualFundCommissionCalculator() {
           <Card className="shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calculator className="h-6 w-6 text-blue-600" />
+                <Calculator className="h-6 w-6 text-primary" />
                 Investment Details
               </CardTitle>
             </CardHeader>
@@ -265,23 +266,23 @@ export default function MutualFundCommissionCalculator() {
               <div className="space-y-6">
                 {/* Results will be displayed here */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-green-50 rounded-lg">
-                    <h3 className="font-semibold text-green-700">Direct Plan</h3>
-                    <p className="text-2xl font-bold text-green-600">
+                  <div className="p-4 bg-green-50 dark:bg-green-950/30 rounded-lg">
+                    <h3 className="font-semibold text-green-700 dark:text-green-400">Direct Plan</h3>
+                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                       ₹{result?.directPlan.finalCorpus.toLocaleString() || 0}
                     </p>
                   </div>
-                  <div className="p-4 bg-red-50 rounded-lg">
-                    <h3 className="font-semibold text-red-700">Regular Plan</h3>
-                    <p className="text-2xl font-bold text-red-600">
+                  <div className="p-4 bg-red-50 dark:bg-red-950/30 rounded-lg">
+                    <h3 className="font-semibold text-red-700 dark:text-red-400">Regular Plan</h3>
+                    <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                       ₹{result?.regularPlan.finalCorpus.toLocaleString() || 0}
                     </p>
                   </div>
                 </div>
 
-                <div className="p-4 bg-blue-50 rounded-lg">
-                  <h3 className="font-semibold text-blue-700">Potential Savings</h3>
-                  <p className="text-2xl font-bold text-blue-600">
+                <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
+                  <h3 className="font-semibold text-blue-700 dark:text-blue-400">Potential Savings</h3>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     ₹{result?.potentialSavings.toLocaleString() || 0}
                   </p>
                 </div>
@@ -300,13 +301,13 @@ export default function MutualFundCommissionCalculator() {
                     {result?.regularPlan.yearlyBreakdown.map((item, index) => (
                       <TableRow key={item.year}>
                         <TableCell>{item.year}</TableCell>
-                        <TableCell className="text-green-600">
+                        <TableCell className="text-green-600 dark:text-green-400">
                           ₹{result.directPlan.yearlyBreakdown[index].corpus.toLocaleString()}
                         </TableCell>
-                        <TableCell className="text-red-600">
+                        <TableCell className="text-red-600 dark:text-red-400">
                           ₹{item.corpus.toLocaleString()}
                         </TableCell>
-                        <TableCell className="text-blue-600">
+                        <TableCell className="text-blue-600 dark:text-blue-400">
                           ₹{(result.directPlan.yearlyBreakdown[index].corpus - item.corpus).toLocaleString()}
                         </TableCell>
                       </TableRow>
@@ -320,10 +321,10 @@ export default function MutualFundCommissionCalculator() {
 
         {/* CTA Section */}
         <div className="flex justify-center gap-4 mt-8">
-          <Button className="bg-green-600 hover:bg-green-700">
+          <Button className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800">
             Switch to Direct Plan Now
           </Button>
-          <Button variant="outline" className="border-blue-600 text-blue-600">
+          <Button variant="outline" className="border-primary text-primary">
             <MessageCircle className="h-4 w-4 mr-2" />
             Talk to an Advisor
           </Button>

@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Resolver, useForm } from "react-hook-form";
 import * as z from "zod";
 import { CATEGORIES, CREDIT_CARDS, PLATFORMS } from '@/utils/constants';
 import { useState } from 'react';
@@ -46,7 +46,7 @@ export default function CreditCardRecommender() {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as Resolver<z.infer<typeof formSchema>>,
     defaultValues: {
       amount: 0,
       platform: "",

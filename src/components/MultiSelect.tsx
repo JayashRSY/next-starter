@@ -64,7 +64,7 @@ export default function MultiSelect({
                   className={cn(
                     "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
                     selected.includes(option)
-                      ? "bg-primary text-white"
+                      ? "bg-primary text-primary-foreground"
                       : "opacity-50"
                   )}
                 >

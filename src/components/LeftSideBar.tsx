@@ -90,12 +90,12 @@ const LeftSideBar = () => {
       <nav
         aria-label="Main Navigation"
         className={cn(
-          "flex flex-col h-screen bg-white border-r border-gray-100 shadow-sm transition-all duration-300",
+          "flex flex-col h-screen bg-background border-r border-border shadow-sm transition-all duration-300",
           isCollapsed ? "w-20" : "w-64"
         )}
       >
         {/* Header */}
-        <div className="p-4 border-b border-gray-100">
+        <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between">
             {!isCollapsed && (
               <div className="flex items-center gap-2">
@@ -112,13 +112,13 @@ const LeftSideBar = () => {
             )}
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-lg hover:bg-muted transition-colors"
               aria-label="Toggle Sidebar"
             >
               {isCollapsed ? (
-                <ChevronRight className="w-5 h-5 text-gray-500" />
+                <ChevronRight className="w-5 h-5 text-muted-foreground" />
               ) : (
-                <ChevronLeft className="w-5 h-5 text-gray-500" />
+                <ChevronLeft className="w-5 h-5 text-muted-foreground" />
               )}
             </button>
           </div>
@@ -139,26 +139,26 @@ const LeftSideBar = () => {
                       "group relative",
                       isCollapsed ? "justify-center" : "",
                       isActive 
-                        ? "bg-gray-100 text-gray-900" 
-                        : "hover:bg-gray-50 text-gray-700"
+                        ? "bg-muted text-foreground" 
+                        : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
                     )}
                   >
                     <span className={cn(
                       "transition-colors",
-                      isActive ? item.color : "text-gray-500",
+                      isActive ? item.color : "text-muted-foreground",
                     )}>
                       {item.icon}
                     </span>
                     {!isCollapsed && (
                       <span className={cn(
                         "font-medium",
-                        isActive ? "text-gray-900" : "text-gray-700 group-hover:text-gray-900"
+                        isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                       )}>
                         {item.label}
                       </span>
                     )}
                     {isCollapsed && (
-                      <div className="absolute left-full ml-6 px-2 py-1 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
+                      <div className="absolute left-full ml-6 px-2 py-1 bg-popover text-popover-foreground text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
                         {item.label}
                       </div>
                     )}
@@ -170,7 +170,7 @@ const LeftSideBar = () => {
         </div>
 
         {/* Bottom Navigation */}
-        <div className="border-t border-gray-100 py-4 px-3">
+        <div className="border-t border-border py-4 px-3">
           <ul className="space-y-1">
             {bottomNavItems.map((item, index) => {
               const isActive = pathname === `/dashboard${item.href}`;
@@ -183,26 +183,26 @@ const LeftSideBar = () => {
                       "group relative",
                       isCollapsed ? "justify-center" : "",
                       isActive 
-                        ? "bg-gray-100 text-gray-900" 
-                        : "hover:bg-gray-50 text-gray-700"
+                        ? "bg-muted text-foreground" 
+                        : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
                     )}
                   >
                     <span className={cn(
                       "transition-colors",
-                      isActive ? item.color : "text-gray-500"
+                      isActive ? item.color : "text-muted-foreground"
                     )}>
                       {item.icon}
                     </span>
                     {!isCollapsed && (
                       <span className={cn(
                         "font-medium",
-                        isActive ? "text-gray-900" : "text-gray-700 group-hover:text-gray-900"
+                        isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                       )}>
                         {item.label}
                       </span>
                     )}
                     {isCollapsed && (
-                      <div className="absolute left-full ml-6 px-2 py-1 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
+                      <div className="absolute left-full ml-6 px-2 py-1 bg-popover text-popover-foreground text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
                         {item.label}
                       </div>
                     )}

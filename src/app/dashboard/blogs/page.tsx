@@ -34,36 +34,36 @@ const blogs = [
 
 export default function BlogsPage() {
   return (
-    <div className="p-8 space-y-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div className="p-8 space-y-8 bg-background min-h-screen">
       <div className="flex flex-col gap-4">
         <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           Financial Insights
         </h1>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Stay updated with the latest insights, tips, and strategies in personal finance.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {blogs.map((blog, index) => (
-          <Card key={index} className="hover:shadow-lg transition-all duration-300 border-none bg-white/80 backdrop-blur-sm">
+          <Card key={index} className="hover:shadow-lg transition-all duration-300 border-border bg-card/80 dark:bg-card/60 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-blue-600 font-medium px-2 py-1 bg-blue-50 rounded-full">
+                <span className="text-sm text-blue-600 dark:text-blue-400 font-medium px-2 py-1 bg-blue-50 dark:bg-blue-900/30 rounded-full">
                   {blog.category}
                 </span>
-                <span className="text-sm text-gray-500">{blog.date}</span>
+                <span className="text-sm text-muted-foreground">{blog.date}</span>
               </div>
-              <CardTitle className="text-xl font-semibold line-clamp-2">
+              <CardTitle className="text-xl font-semibold line-clamp-2 text-foreground">
                 {blog.title}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600 mb-4 line-clamp-3">
+              <p className="text-muted-foreground mb-4 line-clamp-3">
                 {blog.excerpt}
               </p>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 text-sm text-gray-500">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <User className="w-4 h-4" />
                     <span>{blog.author}</span>
@@ -73,7 +73,7 @@ export default function BlogsPage() {
                     <span>{blog.readTime}</span>
                   </div>
                 </div>
-                <Button variant="ghost" className="text-blue-600 hover:text-blue-700">
+                <Button variant="ghost" className="text-primary hover:text-primary/90 dark:text-primary dark:hover:text-primary/90">
                   Read More
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
