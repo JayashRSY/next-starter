@@ -155,7 +155,7 @@ const AnalyticsPage = () => {
                   label
                   paddingAngle={2}
                 >
-                  {categoryData.map((entry, index) => (
+                  {categoryData.map((_entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
                       fill={COLORS[index % COLORS.length]}
