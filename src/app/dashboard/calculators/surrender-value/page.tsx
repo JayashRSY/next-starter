@@ -54,7 +54,6 @@ export default function InsuranceSurrenderValueCalculator() {
       sumAssured,
       premiumAmount,
       completedYears,
-      policyTerm,
       bonusRate,
     } = formData;
 

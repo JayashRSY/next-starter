@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json(parsed);
         } catch (parseError) {
             return NextResponse.json(
-                { error: 'Invalid response format from AI' },
+                { error: 'Invalid response format from AI' + parseError },
                 { status: 500 }
             );
         }

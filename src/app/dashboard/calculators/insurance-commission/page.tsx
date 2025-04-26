@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { IndianRupee, HelpCircle, Download, Calculator } from "lucide-react";
+import { IndianRupee, HelpCircle, Download } from "lucide-react";
 import {
   Select,
   SelectContent,

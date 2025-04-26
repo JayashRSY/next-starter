@@ -52,7 +52,7 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
@@ -65,6 +65,7 @@ const Login = () => {
       
       // No need to set user here as it will be handled by the callback
     } catch (error) {
+      console.log("🚀 ~ file: page.tsx:68 ~ error:", error)
       toast("Google sign-in failed");
     } finally {
       setIsGoogleLoading(false);

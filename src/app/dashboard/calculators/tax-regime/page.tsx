@@ -40,7 +40,7 @@ export default function TaxRegimeCalculator() {
     winner: 'old' | 'new';
   } | null>(null);
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit } = useForm<FormData>({
     resolver: zodResolver(formSchema) as Resolver<FormData>,
     defaultValues: {
       standardDeduction: 50000,

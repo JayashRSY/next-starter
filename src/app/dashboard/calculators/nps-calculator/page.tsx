@@ -6,14 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Wallet, HelpCircle, Download, Calculator, PieChart } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Wallet, HelpCircle, Download } from "lucide-react";
+
 import {
   Tooltip,
   TooltipContent,
@@ -67,7 +61,6 @@ export default function NPSCalculator() {
     let totalInvestment = 0;
     let currentBalance = 0;
     const monthlyRate = expectedReturn / 12 / 100;
-    const totalMonths = (retirementAge - age) * 12;
     const monthlyTotalContribution = monthlyContribution + employerContribution;
 
     for (let year = 1; year <= retirementAge - age; year++) {

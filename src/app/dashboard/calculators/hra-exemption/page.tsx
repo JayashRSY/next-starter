@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Building2, HelpCircle, Download, Calculator } from "lucide-react";
+import { Building2, HelpCircle, Download } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -23,8 +23,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
-  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 

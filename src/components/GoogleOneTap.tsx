@@ -39,6 +39,7 @@ const OneTapComponent = () => {
           return
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         /* global google */
         google.accounts.id.initialize({
           client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
@@ -70,7 +71,8 @@ const OneTapComponent = () => {
     }
     initializeGoogleOneTap()
     return () => window.removeEventListener('load', initializeGoogleOneTap)
-  }, [])
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [])
 
   return (
     <>

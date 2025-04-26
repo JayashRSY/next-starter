@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { TrendingUp, HelpCircle, Download, Calculator } from "lucide-react";
+import { TrendingUp, HelpCircle, Download } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -67,7 +67,7 @@ export default function IncreasingSIPCalculator() {
     let currentSIPAmount = initialAmount;
 
     for (let year = 1; year <= investmentPeriod; year++) {
-      let yearlyInvestment = currentSIPAmount * 12;
+      const yearlyInvestment = currentSIPAmount * 12;
       totalInvestment += yearlyInvestment;
 
       // Calculate returns for this year

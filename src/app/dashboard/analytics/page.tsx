@@ -2,7 +2,6 @@
 
 import { Card } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import { useState } from 'react';
 import { ArrowUpRight, ArrowDownRight, DollarSign, Calendar, ShoppingBag, Gift } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
@@ -26,7 +25,6 @@ const categoryData = [
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 const AnalyticsPage = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 

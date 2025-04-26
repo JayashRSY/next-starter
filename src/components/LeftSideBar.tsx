@@ -12,8 +12,6 @@ import {
   MessageSquare,
   ChevronLeft,
   ChevronRight,
-  Settings,
-  Bell,
   BookOpen,
 } from "lucide-react";
 import Link from "next/link";
@@ -99,14 +97,10 @@ const LeftSideBar = () => {
           <div className="flex items-center justify-between">
             {!isCollapsed && (
               <div className="flex items-center gap-2">
-                <img 
-                  src="/coin.png" 
-                  alt="Wealth Wings Logo" 
-                  className="w-8 h-8 object-contain"
-                />
+                {/* Logo */}
                 <span className="text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-1">
-                  <span className="font-mono">Finance</span>
-                  <span className="font-sans italic">Personalized</span>
+                  <span className="font-mono">Your Money,</span>
+                  <span className="font-sans italic"> Your Way</span>
                 </span>
               </div>
             )}

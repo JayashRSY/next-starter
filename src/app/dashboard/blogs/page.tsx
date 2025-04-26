@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, ArrowRight, Clock, User, Tag } from "lucide-react";
+import { ArrowRight, Clock, User } from "lucide-react";
 
 // Sample blog data (in a real app, this would come from an API)
 const blogs = [

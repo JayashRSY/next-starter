@@ -42,6 +42,7 @@ const formSchema = z.object({
 });
 
 export default function CreditCardRecommender() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [recommendationResult, setRecommendationResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 

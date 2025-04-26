@@ -6,14 +6,7 @@ import { Calculator, Download, MessageCircle, HelpCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import {
   Tooltip,
   TooltipContent,
@@ -69,6 +62,7 @@ export default function MutualFundCommissionCalculator() {
   
   useEffect(() => {
     calculateResults();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData]);
 
   const calculateResults = () => {
@@ -78,7 +72,6 @@ export default function MutualFundCommissionCalculator() {
       duration,
       expectedReturn,
       commissionRate,
-      additionalCharges
     } = formData;
 
     // Helper function to calculate lump sum amount
@@ -103,7 +96,6 @@ export default function MutualFundCommissionCalculator() {
     // Direct plan calculations (without commission)
     const directRate = expectedReturn;
     let directCorpus = 0;
-    let directCommission = 0;
 
     for (let year = 1; year <= duration; year++) {
       // Calculate for lump sum

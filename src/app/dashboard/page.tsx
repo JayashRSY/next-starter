@@ -2,8 +2,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  LineChart,
-  Line,
   ResponsiveContainer,
   XAxis,
   YAxis,
@@ -13,7 +11,7 @@ import {
   AreaChart,
 } from "recharts";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ArrowUpRight, ArrowDownRight, Wallet, CreditCard, PiggyBank, TrendingUp, DollarSign } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Wallet, CreditCard, PiggyBank, TrendingUp } from "lucide-react";
 import { useTheme } from "next-themes";
 
 const data = [

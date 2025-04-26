@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Calculator, HelpCircle, Download, ArrowRightLeft } from "lucide-react";
+import { Calculator, HelpCircle, Download } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,

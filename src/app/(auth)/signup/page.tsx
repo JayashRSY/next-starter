@@ -32,7 +32,7 @@ const Signup = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
       });
@@ -51,7 +51,7 @@ const Signup = () => {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
@@ -64,7 +64,7 @@ const Signup = () => {
 
       // No need to set user here as it will be handled by the callback
     } catch (error) {
-      toast("Google sign-in failed");
+      toast("Google sign-in failed:" + error);
     } finally {
       setIsGoogleLoading(false);
     }

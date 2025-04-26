@@ -1,8 +1,7 @@
 'use client';
 
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ChevronRight, BarChart3, Shield, Clock, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
 const AboutPage = () => {
   return (
@@ -97,7 +96,7 @@ const AboutPage = () => {
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-foreground mb-4">Get in Touch</h2>
             <p className="text-lg text-muted-foreground mb-6">
-              Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+              Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
             </p>
             <a 
               href="mailto:contact@yourapp.com" 
