@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "lucide-react";
 import ThemeButton from "./ThemeButton";
@@ -20,8 +21,16 @@ const Header = () => {
 
   return (
     <header className="flex items-center justify-between px-6 py-4 shadow-md bg-background border-b border-border">
-      <div className="text-xl font-bold text-foreground">Wealth Wings</div>
-
+      <div className="flex gap-4 items-baseline">
+        <Image
+          src="/coin.png"
+          alt="Wealth Wings Logo"
+          className="w-8 h-8 object-contain"
+          width={40}
+          height={40}
+        />
+        <div className="text-xl font-bold text-foreground">Wealth Wings</div>
+      </div>
       <nav>
         {user ? (
           <div className="flex items-center space-x-4">
