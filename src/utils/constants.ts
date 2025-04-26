@@ -1,3 +1,18 @@
+// Define the CreditCard type at the top of the file
+export interface CreditCard {
+  id: string;
+  name: string;
+  bank: string;
+  type: string;
+  rewards: {
+    [key: string]: number;
+    default: number;
+  };
+  annualFee: number;
+  benefits: string[];
+  imageUrl: string;
+}
+
 // Constants for platform options
 export const PLATFORMS = [
     "Amazon",
