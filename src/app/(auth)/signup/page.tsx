@@ -54,14 +54,14 @@ const Signup = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
         },
       });
-
+  
       if (error) {
         toast(`Google sign-in failed: ${error.message}`);
       }
-
+  
       // No need to set user here as it will be handled by the callback
     } catch (error) {
       toast("Google sign-in failed:" + error);
