@@ -15,6 +15,7 @@ import {
   BookOpen,
   FileText,
   Calendar,
+  Wallet,
 } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
@@ -76,6 +77,12 @@ const LeftSideBar = () => {
           href: "/credit-card/statement-history",
         },
       ],
+    },
+    {
+      label: "Finance Tracker",
+      href: "/finance-tracker",
+      icon: <Wallet className="w-5 h-5" />,
+      color: "text-orange-500",
     },
     {
       label: "Financial Planning",
