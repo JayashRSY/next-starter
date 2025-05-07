@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ResponsiveContainer,
@@ -11,8 +11,21 @@ import {
   AreaChart,
 } from "recharts";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ArrowUpRight, ArrowDownRight, Wallet, CreditCard, PiggyBank, TrendingUp } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Wallet, CreditCard, PiggyBank, TrendingUp, FileText, Download, Eye, Calendar } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/lib/supabase/client';
+import { format } from 'date-fns';
+import Link from 'next/link';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 const data = [
   { name: "Jan", value: 400 },
@@ -23,9 +36,69 @@ const data = [
   { name: "Jun", value: 800 },
 ];
 
+interface Statement {
+  id: string;
+  statement_date: string;
+  billing_period: string;
+  total_amount: number;
+  minimum_due: number;
+  due_date: string;
+  file_path: string;
+  created_at: string;
+}
+
 const Dashboard = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const [statements, setStatements] = useState<Statement[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchStatements = async () => {
+      if (!user) return;
+
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('credit_card_statements')
+          .select('*')
+          .order('statement_date', { ascending: false })
+          .limit(5); // Only get the 5 most recent statements for the dashboard
+
+        if (error) throw error;
+        setStatements(data || []);
+      } catch (error) {
+        console.error('Error fetching statements:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStatements();
+  }, [user]);
+
+  const downloadStatement = async (filePath: string) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from('credit-card-statements')
+        .download(filePath);
+
+      if (error) throw error;
+
+      // Create a download link
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filePath.split('/').pop() || 'statement.pdf';
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading statement:', error);
+    }
+  };
   
   return (
     <div className="p-8 space-y-8 bg-background min-h-screen">
@@ -104,6 +177,7 @@ const Dashboard = () => {
           <TabsTrigger value="overview" className="data-[state=active]:bg-background dark:data-[state=active]:bg-background/80">Overview</TabsTrigger>
           <TabsTrigger value="expenses" className="data-[state=active]:bg-background dark:data-[state=active]:bg-background/80">Expenses</TabsTrigger>
           <TabsTrigger value="investments" className="data-[state=active]:bg-background dark:data-[state=active]:bg-background/80">Investments</TabsTrigger>
+          <TabsTrigger value="statements" className="data-[state=active]:bg-background dark:data-[state=active]:bg-background/80">Credit Card Statements</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">
@@ -204,6 +278,87 @@ const Dashboard = () => {
                   </li>
                 ))}
               </ul>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* New Credit Card Statements Tab */}
+        <TabsContent value="statements">
+          <Card className="border-border bg-card/80 dark:bg-card/60 backdrop-blur-sm">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-xl text-foreground flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-blue-600" />
+                Recent Credit Card Statements
+              </CardTitle>
+              <Link href="/dashboard/credit-card/statement-upload">
+                <Button size="sm" className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  Upload New Statement
+                </Button>
+              </Link>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="text-center py-4">Loading statements...</div>
+              ) : statements.length === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-muted-foreground mb-4">You haven&apos;t uploaded any statements yet.</p>
+                  <Link href="/dashboard/credit-card/statement-upload">
+                    <Button>Upload Your First Statement</Button>
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Statement Date</TableHead>
+                        <TableHead>Billing Period</TableHead>
+                        <TableHead>Total Amount</TableHead>
+                        <TableHead>Due Date</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {statements.map((statement) => (
+                        <TableRow key={statement.id}>
+                          <TableCell>
+                            {format(new Date(statement.statement_date), 'dd MMM yyyy')}
+                          </TableCell>
+                          <TableCell>{statement.billing_period}</TableCell>
+                          <TableCell>₹{statement.total_amount.toLocaleString()}</TableCell>
+                          <TableCell>
+                            {format(new Date(statement.due_date), 'dd MMM yyyy')}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => downloadStatement(statement.file_path)}
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                              <Link href={`/dashboard/credit-card/statement-details/${statement.id}`}>
+                                <Button variant="outline" size="sm">
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </Link>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  <div className="mt-4 text-right">
+                    <Link href="/dashboard/credit-card/statement-history">
+                      <Button variant="link" className="text-sm">
+                        View All Statements →
+                      </Button>
+                    </Link>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

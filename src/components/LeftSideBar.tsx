@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -13,6 +13,8 @@ import {
   ChevronLeft,
   ChevronRight,
   BookOpen,
+  FileText,
+  Calendar,
 } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
@@ -22,6 +24,25 @@ const LeftSideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { user } = useAuth();
   const pathname = usePathname();
+  // Track submenu open states in a single state object
+  const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({});
+  // Add a state to track if the component has mounted
+  const [hasMounted, setHasMounted] = useState(false);
+
+  // Set hasMounted to true after the component mounts
+  useEffect(() => {
+    setHasMounted(true);
+    
+    // Initialize open submenus based on the current path
+    const initialOpenSubMenus: Record<string, boolean> = {};
+    navItems.forEach((item, index) => {
+      if (item.subItems && item.subItems.some(subItem => 
+        pathname === `/dashboard${item.href}${subItem.href}`)) {
+        initialOpenSubMenus[index] = true;
+      }
+    });
+    setOpenSubMenus(initialOpenSubMenus);
+  }, [pathname]);
 
   const navItems = [
     {
@@ -38,9 +59,23 @@ const LeftSideBar = () => {
     },
     {
       label: "Credit Card",
-      href: "/credit-card",
+      href: "/",
       icon: <CreditCard className="w-5 h-5" />,
       color: "text-green-500",
+      subItems: [
+        {
+          label: "Recommender",
+          href: "/credit-card",
+        },
+        {
+          label: "Upload Statement",
+          href: "/credit-card/statement-upload",
+        },
+        {
+          label: "Statement History",
+          href: "/credit-card/statement-history",
+        },
+      ],
     },
     {
       label: "Financial Planning",
@@ -83,6 +118,19 @@ const LeftSideBar = () => {
     },
   ];
 
+  // Toggle submenu open state
+  const toggleSubMenu = (index: number) => {
+    setOpenSubMenus(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
+
+  // If the component hasn't mounted yet, return null or a loading state
+  if (!hasMounted) {
+    return <div className="w-64 bg-background border-r border-border"></div>;
+  }
+
   return (
     user && (
       <nav
@@ -123,40 +171,89 @@ const LeftSideBar = () => {
           <ul className="space-y-1 px-3">
             {navItems.map((item, index) => {
               const isActive = pathname === `/dashboard${item.href}` || 
-                             (item.href === '/' && pathname === '/dashboard');
+                             (item.href === '/' && pathname === '/dashboard') ||
+                             (item.subItems && item.subItems.some(subItem => 
+                               pathname === `/dashboard${item.href}${subItem.href}`));
+              
+              const hasSubItems = item.subItems && item.subItems.length > 0;
+              const isSubMenuOpen = openSubMenus[index] || false;
+
               return (
                 <li key={index}>
-                  <Link
-                    href={`/dashboard${item.href}`}
-                    className={cn(
-                      "flex items-center gap-3 px-3 py-2 rounded-lg transition-all",
-                      "group relative",
-                      isCollapsed ? "justify-center" : "",
-                      isActive 
-                        ? "bg-muted text-foreground" 
-                        : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    <span className={cn(
-                      "transition-colors",
-                      isActive ? item.color : "text-muted-foreground",
-                    )}>
-                      {item.icon}
-                    </span>
-                    {!isCollapsed && (
+                  <div className="flex flex-col">
+                    <Link
+                      href={hasSubItems ? '#' : `/dashboard${item.href}`}
+                      className={cn(
+                        "flex items-center gap-3 px-3 py-2 rounded-lg transition-all",
+                        "group relative",
+                        isCollapsed ? "justify-center" : "",
+                        isActive 
+                          ? "bg-muted text-foreground" 
+                          : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
+                      )}
+                      onClick={(e) => {
+                        if (hasSubItems) {
+                          e.preventDefault();
+                          toggleSubMenu(index);
+                        }
+                      }}
+                    >
                       <span className={cn(
-                        "font-medium",
-                        isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                        "transition-colors",
+                        isActive ? item.color : "text-muted-foreground",
                       )}>
-                        {item.label}
+                        {item.icon}
                       </span>
+                      {!isCollapsed && (
+                        <>
+                          <span className={cn(
+                            "font-medium flex-1",
+                            isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                          )}>
+                            {item.label}
+                          </span>
+                          {hasSubItems && (
+                            <ChevronRight className={cn(
+                              "h-4 w-4 transition-transform",
+                              isSubMenuOpen ? "rotate-90" : ""
+                            )} />
+                          )}
+                        </>
+                      )}
+                      {isCollapsed && hasSubItems && (
+                        <div className="absolute left-full ml-6 px-2 py-1 bg-popover text-popover-foreground text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
+                          {item.label}
+                        </div>
+                      )}
+                    </Link>
+                    
+                    {/* Sub-menu items */}
+                    {!isCollapsed && hasSubItems && isSubMenuOpen && (
+                      <ul className="pl-8 mt-1 space-y-1">
+                        {item.subItems?.map((subItem, subIndex) => {
+                          const isSubActive = pathname === `/dashboard${item.href}${subItem.href}`;
+                          return (
+                            <li key={subIndex}>
+                              <Link
+                                href={`/dashboard${item.href}${subItem.href}`}
+                                className={cn(
+                                  "flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-sm",
+                                  isSubActive 
+                                    ? "bg-muted/70 text-foreground" 
+                                    : "hover:bg-muted/30 text-muted-foreground hover:text-foreground"
+                                )}
+                              >
+                                {subItem.label === "Upload Statement" && <FileText className="h-3.5 w-3.5" />}
+                                {subItem.label === "Statement History" && <Calendar className="h-3.5 w-3.5" />}
+                                {subItem.label === "Recommender" && <CreditCard className="h-3.5 w-3.5" />}
+                                <span>{subItem.label}</span>
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
                     )}
-                    {isCollapsed && (
-                      <div className="absolute left-full ml-6 px-2 py-1 bg-popover text-popover-foreground text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
-                        {item.label}
-                      </div>
-                    )}
-                  </Link>
+                  </div>
                 </li>
               );
             })}
