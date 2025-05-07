@@ -1,17 +1,13 @@
-"use client";
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+export default async function Home() {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
 
-export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.push("/dashboard");
-  }, [router]);
-
-  return (
-    <>
-    </>
-  );
+  if (session) {
+    redirect('/dashboard');
+  } else {
+    redirect('/login');
+  }
 }
