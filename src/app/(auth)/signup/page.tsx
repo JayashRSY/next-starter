@@ -54,9 +54,7 @@ const Signup = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: process.env.NEXT_PUBLIC_SITE_URL 
-            ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/dashboard`
-            : `${window.location.origin}/auth/callback?next=/dashboard`,
+          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
         },
       });
   
