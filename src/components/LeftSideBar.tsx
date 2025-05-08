@@ -58,6 +58,7 @@ const LeftSideBar = () => {
         }));
       }
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   const navItems = [
