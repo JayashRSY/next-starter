@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import Header from "@/components/Header";
-import LeftSideBar from "@/components/LeftSideBar";
 import ClientProviders from "@/providers/ClientProviders";
 import { ThemeProvider } from "next-themes";
 
@@ -26,7 +25,6 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Header />
             <div className="flex">
-              <LeftSideBar />
               <main className="flex-1 bg-background">{children}</main>
             </div>
             <Toaster position="top-right" />

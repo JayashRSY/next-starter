@@ -2,6 +2,8 @@
 import { useAuth } from '@/hooks/useAuth';
 import LoadingAuth from '@/components/LoadingAuth';
 import { redirect } from 'next/navigation';
+import { PageBreadcrumb } from "@/components/PageBreadcrumb";
+import LeftSideBar from '@/components/LeftSideBar';
 
 export default function DashboardLayout({
   children,
@@ -18,5 +20,13 @@ export default function DashboardLayout({
     redirect('/login');
   }
 
-  return <>{children}</>;
+  return (
+    <div className="flex min-h-screen">
+      <LeftSideBar />
+      <div className="flex-1 p-8">
+        <PageBreadcrumb />
+        {children}
+      </div>
+    </div>
+  );
 }
