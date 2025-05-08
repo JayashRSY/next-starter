@@ -20,6 +20,7 @@ import {
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 const LeftSideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -44,6 +45,19 @@ const LeftSideBar = () => {
     });
     setOpenSubMenus(initialOpenSubMenus);
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Update open submenus when pathname changes
+  useEffect(() => {
+    navItems.forEach((item, index) => {
+      if (item.subItems && item.subItems.some(subItem => 
+        pathname === `/dashboard${item.href}${subItem.href}`)) {
+        setOpenSubMenus(prev => ({
+          ...prev,
+          [index]: true
+        }));
+      }
+    });
   }, [pathname]);
 
   const navItems = [
@@ -206,12 +220,19 @@ const LeftSideBar = () => {
                         }
                       }}
                     >
-                      <span className={cn(
-                        "transition-colors",
-                        isActive ? item.color : "text-muted-foreground",
-                      )}>
+                      <motion.span 
+                        initial={{ scale: 1 }}
+                        animate={{ 
+                          scale: isActive ? 1.1 : 1,
+                          color: isActive ? item.color : "inherit"
+                        }}
+                        className={cn(
+                          "transition-colors",
+                          isActive ? item.color : "text-muted-foreground",
+                        )}
+                      >
                         {item.icon}
-                      </span>
+                      </motion.span>
                       {!isCollapsed && (
                         <>
                           <span className={cn(
@@ -221,45 +242,78 @@ const LeftSideBar = () => {
                             {item.label}
                           </span>
                           {hasSubItems && (
-                            <ChevronRight className={cn(
-                              "h-4 w-4 transition-transform",
-                              isSubMenuOpen ? "rotate-90" : ""
-                            )} />
+                            <motion.span
+                              animate={{ 
+                                rotate: isSubMenuOpen ? 90 : 0 
+                              }}
+                              transition={{ duration: 0.2 }}
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                            </motion.span>
                           )}
                         </>
                       )}
                       {isCollapsed && hasSubItems && (
-                        <div className="absolute left-full ml-6 px-2 py-1 bg-popover text-popover-foreground text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
+                        <div className="absolute left-full ml-6 px-2 py-1 bg-popover text-popover-foreground text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap shadow-md">
                           {item.label}
                         </div>
                       )}
                     </Link>
                     
                     {/* Sub-menu items */}
-                    {!isCollapsed && hasSubItems && isSubMenuOpen && (
-                      <ul className="pl-8 mt-1 space-y-1">
-                        {item.subItems?.map((subItem, subIndex) => {
-                          const isSubActive = pathname === `/dashboard${item.href}${subItem.href}`;
-                          return (
-                            <li key={subIndex}>
-                              <Link
-                                href={`/dashboard${item.href}${subItem.href}`}
-                                className={cn(
-                                  "flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-sm",
-                                  isSubActive 
-                                    ? "bg-muted/70 text-foreground" 
-                                    : "hover:bg-muted/30 text-muted-foreground hover:text-foreground"
-                                )}
-                              >
-                                {subItem.label === "Upload Statement" && <FileText className="h-3.5 w-3.5" />}
-                                {subItem.label === "Statement History" && <Calendar className="h-3.5 w-3.5" />}
-                                {subItem.label === "Recommender" && <CreditCard className="h-3.5 w-3.5" />}
-                                <span>{subItem.label}</span>
-                              </Link>
-                            </li>
-                          );
-                        })}
-                      </ul>
+                    {!isCollapsed && hasSubItems && (
+                      <AnimatePresence>
+                        {isSubMenuOpen && (
+                          <motion.ul
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="pl-8 mt-1 space-y-1 overflow-hidden"
+                          >
+                            {item.subItems?.map((subItem, subIndex) => {
+                              const isSubActive = pathname === `/dashboard${item.href}${subItem.href}`;
+                              return (
+                                <motion.li 
+                                  key={subIndex}
+                                  initial={{ x: -10, opacity: 0 }}
+                                  animate={{ x: 0, opacity: 1 }}
+                                  transition={{ delay: subIndex * 0.05 }}
+                                >
+                                  <Link
+                                    href={`/dashboard${item.href}${subItem.href}`}
+                                    className={cn(
+                                      "flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-sm",
+                                      isSubActive 
+                                        ? "bg-muted/70 text-foreground font-medium" 
+                                        : "hover:bg-muted/30 text-muted-foreground hover:text-foreground"
+                                    )}
+                                  >
+                                    <motion.span
+                                      initial={{ scale: 1 }}
+                                      animate={{ 
+                                        scale: isSubActive ? 1.1 : 1,
+                                        color: isSubActive ? item.color : "inherit"
+                                      }}
+                                    >
+                                      {subItem.label === "Upload Statement" && <FileText className="h-3.5 w-3.5" />}
+                                      {subItem.label === "Statement History" && <Calendar className="h-3.5 w-3.5" />}
+                                      {subItem.label === "Recommender" && <CreditCard className="h-3.5 w-3.5" />}
+                                    </motion.span>
+                                    <span>{subItem.label}</span>
+                                    {isSubActive && (
+                                      <motion.span
+                                        className="absolute left-0 w-1 h-5 bg-gradient-to-b from-blue-500 to-purple-500 rounded-r-full"
+                                        layoutId="activeSubmenuIndicator"
+                                      />
+                                    )}
+                                  </Link>
+                                </motion.li>
+                              );
+                            })}
+                          </motion.ul>
+                        )}
+                      </AnimatePresence>
                     )}
                   </div>
                 </li>
@@ -286,12 +340,19 @@ const LeftSideBar = () => {
                         : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    <span className={cn(
-                      "transition-colors",
-                      isActive ? item.color : "text-muted-foreground"
-                    )}>
+                    <motion.span 
+                      initial={{ scale: 1 }}
+                      animate={{ 
+                        scale: isActive ? 1.1 : 1,
+                        color: isActive ? item.color : "inherit"
+                      }}
+                      className={cn(
+                        "transition-colors",
+                        isActive ? item.color : "text-muted-foreground"
+                      )}
+                    >
                       {item.icon}
-                    </span>
+                    </motion.span>
                     {!isCollapsed && (
                       <span className={cn(
                         "font-medium",
@@ -301,9 +362,15 @@ const LeftSideBar = () => {
                       </span>
                     )}
                     {isCollapsed && (
-                      <div className="absolute left-full ml-6 px-2 py-1 bg-popover text-popover-foreground text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap">
+                      <div className="absolute left-full ml-6 px-2 py-1 bg-popover text-popover-foreground text-sm rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap shadow-md">
                         {item.label}
                       </div>
+                    )}
+                    {isActive && !isCollapsed && (
+                      <motion.span
+                        className="absolute left-0 w-1 h-5 bg-gradient-to-b from-blue-500 to-purple-500 rounded-r-full"
+                        layoutId="activeIndicator"
+                      />
                     )}
                   </Link>
                 </li>
