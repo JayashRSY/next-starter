@@ -33,17 +33,17 @@ const Login = () => {
         password,
       });
       if (error) {
-        toast(`Login failed: ${error.message}`);
+        toast.error(`Login failed: ${error.message}`);
         return;
       }
       setAuthData(data);
       setUser(data.user);
       // Redirect to dashboard after successful login
-      toast("Login successful");
+      toast.success("Login successful");
       router.push("/dashboard");
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      toast("Login failed");
+      toast.error("Login failed");
     } finally {
       setIsLoading(false);
     }

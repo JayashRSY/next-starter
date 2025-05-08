@@ -56,7 +56,7 @@ export const useAuth = () => {
           // Don't redirect here - let the logout function handle it
         } else if (event === 'SIGNED_IN' && session?.user) {
           setUser(session.user)
-          toast.success('Logged in successfully')
+          // toast.success('Logged in successfully')
         } else if (event === 'USER_UPDATED' && session?.user) {
           setUser(session.user)
         }
