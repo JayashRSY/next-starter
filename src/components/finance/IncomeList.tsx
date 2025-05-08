@@ -44,6 +44,7 @@ export function IncomeList() {
     };
 
     fetchIncomes();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, toast]);
 
   const handleDelete = async (id: string) => {
