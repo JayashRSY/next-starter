@@ -57,7 +57,10 @@ const OneTapComponent = () => {
               console.log('Successfully logged in with Google One Tap')
 
               // redirect to protected page
-              router.push('/dashboard')
+              const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL 
+                ? `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`
+                : '/dashboard'
+              router.push(redirectUrl)
             } catch (error) {
               console.error('Error logging in with Google One Tap', error)
             }
